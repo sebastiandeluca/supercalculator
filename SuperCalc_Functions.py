@@ -3,12 +3,14 @@ Created by Sebastian Deluca
 CHECK MAIN.PY for desc.
 
 ADDITIONS:
-2X2 DETERMINANT CALCULATOR
-
 
 FIXES NEEDED:
+Fractions giving incorrect answers
+MATRIX DETERMINANT NEEDS TO BE REWRITTEN
+        - Will fix oversight involving 0s in final statement
+        - (will fix 2(4 + 0) appearing as 2(40))
 
-
+Derivative Function does not support fractional exponents
 '''
 
 from fractions import Fraction
@@ -42,7 +44,7 @@ def division(num_one, num_two):  # Divide two numbers
     quotient = num_one / num_two
     values = quotient.as_integer_ratio()
     if len(str(values[0])) > 9 and len(str(values[1])) > 9:
-        fraction_ver = Fraction(num_one,num_two)
+        fraction_ver = Fraction(num_one, num_two)
     else:
         fraction_ver = str(values[0]) + '/' + str(values[1])
     statement = str(quotient) + ' or ' + str(fraction_ver)
@@ -62,24 +64,30 @@ def square_root(value):  # Determine the square root of a number
     if 0 == check[0][0]:
         sq_root = int(sq_root)
     else:
-        sq_root = Fraction(sq_root)
+        sq_root = str(sq_root) + ' or ' + str(Fraction(sq_root))
     return sq_root
 
 
 def quadratic(equation):  # Determine the x values
-    values = equation.split(' ')
-    abc = []
-    for i in values:
-        abc.append(int(i))
-    a = int(abc[0])
-    b = int(abc[1])
-    c = int(abc[2])
     try:
-        formula_plus = ((b * -1) + (sqrt((b ** 2) - 4 * (a * c)))) / (2 * a)
-        formula_minus = ((b * -1) - (sqrt((b ** 2) - 4 * (a * c)))) / (2 * a)
-        statement = ('x = ' + str(formula_plus) + ', x = ' + str(formula_minus))
-    except ValueError:  # Square Root is negative
-        statement = 'Your square-root value is negative. Program Cannot Calculate.'
+        values = equation.split(' ')
+        abc = []
+        for i in values:
+            abc.append(int(i))
+        a = int(abc[0])
+        b = int(abc[1])
+        c = int(abc[2])
+        try:
+            formula_plus = ((b * -1) + (sqrt((b ** 2) - 4 * (a * c)))) / (2 * a)
+            formula_minus = ((b * -1) - (sqrt((b ** 2) - 4 * (a * c)))) / (2 * a)
+            statement = ('x = ' + str(formula_plus) + ', x = ' + str(formula_minus))
+        except ValueError:  # Square Root is negative
+            print(("\u221a" +'(b\u00B2) - 4(a)(c) was negative. Ignoring negative sign.').center(150, ' '))
+            formula_plus = ((b * -1) + (sqrt(((b ** 2) - 4 * (a * c)) * -1))) / (2 * a)
+            formula_minus = ((b * -1) - (sqrt(((b ** 2) - 4 * (a * c)) * -1))) / (2 * a)
+            statement = ('x = ' + str(formula_plus) + ', x = ' + str(formula_minus))
+    except:
+        statement = False
     return statement
 
 
@@ -90,17 +98,23 @@ def matrix_inverter(matrix):  # Inverts 2x2 Matrixes
     new_matrix.append(int(values[1]) * -1)
     new_matrix.append(int(values[2]) * -1)
     new_matrix.append(values[0])
+    determinant = (int(values[0]) * int(values[3])) - (int(values[1]) * int(values[2]))
     print('The inverted matrix is: ')
     counter = 0
+    print('(1/' + str(determinant) + ')', end=' ')
     print('[', end=' ')
     for i in new_matrix:
 
         if counter == 2:
             print(']')
+            for i in range(len('1/' + str(determinant))):
+                print(' ', end=' ')
             print('[', end=' ')
         print(i, end=' ')
         counter += 1
     print(']')
+    print('')
+    print(('The original matrix\'s determinant is ' + str(determinant)).center(150, ' '))
 
 
 def determinant_calculator(matrix):  # Calculate the determinant
@@ -138,11 +152,11 @@ def determinant_calculator(matrix):  # Calculate the determinant
                 if mid_copy.index(numbers) in past_indices:
                     place = mid_copy.index(numbers)
                     del mid_copy[place]
-                    mid_copy.insert(place, '999999999999999999')
+                    mid_copy.insert(place, 'DELETED')
 
                 if mid_copy.index(numbers) == placement:
                     del mid_copy[mid_copy.index(numbers)]
-                    mid_copy.insert(placement, '99999999999999')
+                    mid_copy.insert(placement, 'DELETED')
                 else:
                     past_indices.append(mid_copy.index(numbers))
                     top_left_det.append(numbers)
@@ -152,11 +166,11 @@ def determinant_calculator(matrix):  # Calculate the determinant
                 if bot_copy.index(numbers) in past_indices:
                     place = bot_copy.index(numbers)
                     del bot_copy[place]
-                    bot_copy.insert(place, '99999999999')
+                    bot_copy.insert(place, 'DELETED')
                 if bot_copy.index(numbers) == placement:
 
                     del bot_copy[bot_copy.index(numbers)]
-                    bot_copy.insert(placement, '9999999999999')
+                    bot_copy.insert(placement, 'DELETED')
                 else:
                     past_indices.append(bot_copy.index(numbers))
                     top_left_det.append(numbers)
@@ -169,11 +183,11 @@ def determinant_calculator(matrix):  # Calculate the determinant
                 if mid_copy.index(numbers) in past_indices:
                     place = mid_copy.index(numbers)
                     del mid_copy[place]
-                    mid_copy.insert(place, '999999999999999999')
+                    mid_copy.insert(place, 'DELETED')
 
                 if mid_copy.index(numbers) == placement:
                     del mid_copy[mid_copy.index(numbers)]
-                    mid_copy.insert(placement, '99999999999999')
+                    mid_copy.insert(placement, 'DELETED')
                 else:
                     past_indices.append(mid_copy.index(numbers))
                     top_mid_det.append(numbers)
@@ -183,11 +197,11 @@ def determinant_calculator(matrix):  # Calculate the determinant
                 if bot_copy.index(numbers) in past_indices:
                     place = bot_copy.index(numbers)
                     del bot_copy[place]
-                    bot_copy.insert(place, '99999999999')
+                    bot_copy.insert(place, 'DELETED')
                 if bot_copy.index(numbers) == placement:
 
                     del bot_copy[bot_copy.index(numbers)]
-                    bot_copy.insert(placement, '9999999999999')
+                    bot_copy.insert(placement, 'DELETED')
                 else:
                     past_indices.append(bot_copy.index(numbers))
                     top_mid_det.append(numbers)
@@ -200,11 +214,11 @@ def determinant_calculator(matrix):  # Calculate the determinant
                 if mid_copy.index(numbers) in past_indices:
                     place = mid_copy.index(numbers)
                     del mid_copy[place]
-                    mid_copy.insert(place, '999999999999999999')
+                    mid_copy.insert(place, 'DELETED')
 
                 if mid_copy.index(numbers) == placement:
                     del mid_copy[mid_copy.index(numbers)]
-                    mid_copy.insert(placement, '99999999999999')
+                    mid_copy.insert(placement, 'DELETED')
                 else:
                     past_indices.append(mid_copy.index(numbers))
                     top_right_det.append(numbers)
@@ -214,11 +228,11 @@ def determinant_calculator(matrix):  # Calculate the determinant
                 if bot_copy.index(numbers) in past_indices:
                     place = bot_copy.index(numbers)
                     del bot_copy[place]
-                    bot_copy.insert(place, '99999999999')
+                    bot_copy.insert(place, 'DELETED')
                 if bot_copy.index(numbers) == placement:
 
                     del bot_copy[bot_copy.index(numbers)]
-                    bot_copy.insert(placement, '9999999999999')
+                    bot_copy.insert(placement, 'DELETED')
                 else:
                     past_indices.append(bot_copy.index(numbers))
                     top_right_det.append(numbers)
@@ -240,11 +254,14 @@ def determinant_calculator(matrix):  # Calculate the determinant
                     top_statement += str(top_row[0]) + '('
                 else:
                     top_statement += '('
-            if (type(top_left_det[0]) == str or type(top_left_det[3]) == str) and (type(top_left_det[1]) == str or type(top_left_det[2]) == str):
+            if (type(top_left_det[0]) == str or type(top_left_det[3]) == str) and (
+                    type(top_left_det[1]) == str or type(top_left_det[2]) == str):
                 if top_row[0] == '1' or top_row[0] == 1:
-                    top_statement = '('+ (str(top_left_det[0]) + str(top_left_det[3])) +(' - ' + str(top_left_det[1]) + str(top_left_det[2]))+ ')'
+                    top_statement = '(' + (str(top_left_det[0]) + str(top_left_det[3])) + (
+                                ' - ' + str(top_left_det[1]) + str(top_left_det[2])) + ')'
                 else:
-                    top_statement = (str(top_row[0]) + '('+ (str(top_left_det[0]) + str(top_left_det[3])) +(' - ' + str(top_left_det[1]) + str(top_left_det[2]))+ ')')
+                    top_statement = (str(top_row[0]) + '(' + (str(top_left_det[0]) + str(top_left_det[3])) + (
+                                ' - ' + str(top_left_det[1]) + str(top_left_det[2])) + ')')
                 both = True
             else:
                 both = False
@@ -274,11 +291,14 @@ def determinant_calculator(matrix):  # Calculate the determinant
                     mid_statement += str(top_row[1]) + '('
                 else:
                     mid_statement += '('
-            if (type(top_mid_det[0]) == str or type(top_mid_det[3]) == str) and (type(top_mid_det[1]) == str or type(top_mid_det[2]) == str):
+            if (type(top_mid_det[0]) == str or type(top_mid_det[3]) == str) and (
+                    type(top_mid_det[1]) == str or type(top_mid_det[2]) == str):
                 if top_row[1] == '1' or top_row[1] == 1:
-                    mid_statement = '(' + (str(top_mid_det[0]) + str(top_mid_det[3])) + (' - ' + str(top_mid_det[1]) + str(top_mid_det[2]))
+                    mid_statement = '(' + (str(top_mid_det[0]) + str(top_mid_det[3])) + (
+                                ' - ' + str(top_mid_det[1]) + str(top_mid_det[2]))
                 else:
-                    mid_statement = (str(top_row[1]) + '(' + (str(top_mid_det[0]) + str(top_mid_det[3])) + (' - ' + str(top_mid_det[1]) + str(top_mid_det[2])))
+                    mid_statement = (str(top_row[1]) + '(' + (str(top_mid_det[0]) + str(top_mid_det[3])) + (
+                                ' - ' + str(top_mid_det[1]) + str(top_mid_det[2])))
                 both = True
             else:
                 both = False
@@ -305,8 +325,10 @@ def determinant_calculator(matrix):  # Calculate the determinant
                 bot_statement += str(top_row[2]) + '('
             else:
                 bot_statement += '('
-        if (type(top_right_det[0]) == str or type(top_right_det[3]) == str) and (type(top_right_det[1]) == str or type(top_right_det[2]) == str):
-            bot_statement = (str(top_row[2]) + '(' + (str(top_right_det[0]) + str(top_right_det[3])) + (' - ' + str(top_right_det[1]) + str(top_right_det[2])))
+        if (type(top_right_det[0]) == str or type(top_right_det[3]) == str) and (
+                type(top_right_det[1]) == str or type(top_right_det[2]) == str):
+            bot_statement = (str(top_row[2]) + '(' + (str(top_right_det[0]) + str(top_right_det[3])) + (
+                        ' - ' + str(top_right_det[1]) + str(top_right_det[2])))
             both = True
         else:
             both = False
@@ -323,38 +345,103 @@ def determinant_calculator(matrix):  # Calculate the determinant
         else:
             bot_statement += str(top_right_det[1] * top_right_det[2])
         bot_statement += ')'
-    
 
-    print((top_statement + ' - ' + mid_statement + ' + ' + bot_statement).center(150, ' '))
-    print(('Unfortunately, I currently cannot simplify further. Hopefully, this helped you!').center(150, ' '))
+        statement = (top_statement + ' - ' + mid_statement + ' + ' + bot_statement)
+        print(('Unfortunately, I currently cannot simplify further. Hopefully, this helped you!').center(150, ' '))
+    print(('Your matrix\'s determinant is ' + str(statement)).center(150, ' '))
 
 
 def derivative_finder(equation):  # Find the derivative
     values = equation.split(' ')
     derivative = []
     for i in values:
-        if 'x' in i:
+        if 'e' in i:
+            placement = i.index('e')
+            try:
+                ending = i.index('x')
+                no_x = False
+            except ValueError:
+                no_x = True
+            try:
+                value = int(i[placement + 1:ending])
+            except:
+                value = 1
+            initial_val = int(i[:placement])
+            final_val = initial_val * value
+            if no_x == True:
+                final = 0
+            else:
+                print(int(initial_val) < 0)
+                print(int(value) < 0)
+                print(len(derivative))
+                if int(initial_val) < 0 and int(value) < 0 and len(derivative) >= 1:
+                    print('pass')
+                    final = ' + '
+                    final += str(final_val) + 'e^' + i[placement + 1:]
+                else:
+                    final = str(final_val) + 'e^' + i[placement + 1:]
+            derivative.append(final)
+
+        if 'x' in i and 'e' not in i:
             placement = i.index('x')
             try:
                 value = int(i[placement + 1:])
-
-            except ValueError:
-                value = ''
-            if value == '':  # No placement
-                final = int(i[:placement])
-                if final >= 0:
-                    final = ' + ' + str(final)
-                else:
-                    final = ' - ' + str(final)
-                derivative.append(final)
+            except:
+                value = 1
+            initial_val = int(i[:placement])
+            final_val = initial_val * value
+            behind_val = value - 1
+            if final_val > 0 and len(derivative) != 0:
+                final = '+ '
             else:
-                final = (int(i[:placement]) * value)
-                adding = value - 1
-                if adding == 1:  # To keep derivative form
-                    adding = ''
-                statement = str(final) + 'x' + str(adding)
-                derivative.append(statement)
+                final = ''
+            if value > 1:
+                if behind_val > 1:
+                    final += str(final_val) + 'x^' + str(behind_val)
+                else:
+                    final += str(final_val) + 'x'
+            elif value == 1:
+                final += str(final_val)
+            elif value == 0:
+                final = ''
+            derivative.append(final)
+
+        if 'x' not in i and 'e' not in i and len(derivative) == 0:
+            derivative.append('0')
     print('The derivative of ' + str(equation) + ' is: ')
     for x in derivative:
-        print(x, end = '')
+        if x == 0 and len(derivative) > 1:
+            pass
+        else:
+            print(x, end=' ')
+
     print('')
+
+
+def pythagorean_theorem(a,b,c):
+    if a.lower() == 'x':
+        unknown_val = 'a'
+        try:
+            value = sqrt((int(c) ** 2) - (int(b) ** 2))
+        except ValueError:
+            value = u"\u221a" + str((int(c) ** 2) - int(b) ** 2)
+
+    elif b.lower() == 'x':
+        unknown_val = 'b'
+        try:
+            value = sqrt((int(c) ** 2) - (int(a) ** 2))
+        except ValueError:
+            value = u"\u221a" + str((int(c) ** 2) - int(a) ** 2)
+    elif c.lower() == 'x':
+        unknown_val = 'c'
+        value = sqrt((int(a) ** 2) + (int(b) ** 2))
+    else:
+        unknown_val = str(c)
+        value = sqrt((int(a) ** 2) + (int(b) ** 2))
+
+    try:
+        value = ('{:.2f}'.format(value))
+    except ValueError:
+        pass
+    print(('With your values, the Pythagorean Theorem states that:').center(150, ' '))
+    print((unknown_val + ' = ' + str(value)).center(150, ' '))
