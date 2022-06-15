@@ -1,6 +1,8 @@
-# SuperCalculator
+ ![Supercalculator Logo](./supercalc_for_site.png?raw=true)
 ------------------
 The egotistically named SuperCalculator was created to help me with mathematics-related problems. It has the capacity to perform basic arithmetic, as well as some more advanced stuff as well.
+
+ ![Main Menu](./SuperCalc_UI.png?raw=true)
 
 ### Features
 Here is a list of all the functions that SuperCalculator has as of Version 0.0.3 (11/03/2020)
